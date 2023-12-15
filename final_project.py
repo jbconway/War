@@ -24,6 +24,8 @@ def save_scoreboard(scoreboard, fileName):
     scoreboard.to_csv(fileName, index = False)
 
 def load_scoreboard(fileName):
+    # if the user wants to change their player's names from player1 and player2, then edit the names in the csv file being read in
+    #
     try:
         scoreboard = pd.read_csv(fileName)
     except FileNotFoundError:
@@ -105,6 +107,8 @@ def conduct_war(player1_cards, player2_cards, war_cards=None ):
 
 
 def main():
+    #create two demensional array using numpy to keep track of the # of cards each player has after each round
+    card_counts = np.array([], dtype=int).reshape(0,2)
     scoreboard = load_scoreboard("War_Scoreboard.csv")
     deck = create_deck()
     player1_cards, player2_cards = deal(deck)
@@ -138,9 +142,21 @@ def main():
         print_scoreboard(scoreboard)
         #print(f"Current Score: Player 1: {p1_score}, Player 2: {p2_score}")
         print(f"Player 1 has {len(player1_cards)} cards and Player 2 has {len(player2_cards)} cards.")
-
+        # add player's card count to the numpy array
+        round = np.array([[len(player1_cards),len(player2_cards)]])
+        card_counts = np.append(card_counts,round, axis = 0)
         round_counter+=1
     save_scoreboard(scoreboard,"War_Scoreboard.csv")
+    # using vector computation to determine average card count of each player
+    average_cards = np.mean(card_counts, axis=0)
+    print(f"Average cards: Player 1: {average_cards[0]}, Player 2: {average_cards[1]}")
+
+    df = pd.DataFrame(card_counts)
+    df['Player 1 > Player 2'] = df[0].shift(-1) > df[1]
+    subset = df[df["Player 1 > Player 2"] == True]
+    print("here are the hands where player 1 did better than player 2")
+    print(subset)
+  
 
 
     # Placeholder for determining and announcing the final winner
