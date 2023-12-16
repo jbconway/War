@@ -12,6 +12,7 @@ def create_scoreboard():
 
 def parse_card_input(card_input):
     #Parses the input string to extract the rank and suit of the card.
+    # checks off *(7.5)*
     suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades']
     ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace']
     pattern = r'(\w+)\s+of\s+(\w+)'
@@ -164,7 +165,7 @@ def main():
                     while player1_cards and player2_cards and round_counter <=maximum_rounds:
                         card1 = player1_cards.pop(0) # *(checks off 5.11)*
                         card2 = player2_cards.pop(0)
-                        card1_value, card1_suit = card1
+                        card1_value, card1_suit = card1 #*(checks off 5.14)*
                         card2_value, card2_suit = card2
                         print(f"\nRound {round_counter} Play cards: Player 1: [{card1_value} of {card1_suit}]   Player 2: [{card2_value} of {card2_suit}]")
 
