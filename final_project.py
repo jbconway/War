@@ -10,6 +10,22 @@ def create_scoreboard():
     scoreboard = pd.DataFrame({'Player': ['Player 1', 'Player 2'], 'Score': [0, 0]})
     return scoreboard
 
+def parse_card_input(card_input):
+    #Parses the input string to extract the rank and suit of the card.
+    suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades']
+    ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace']
+    pattern = r'(\w+)\s+of\s+(\w+)'
+    match = re.match(pattern, card_input)
+
+    if match:
+        rank, suit = match.groups()
+        if rank.capitalize() in ranks and suit.capitalize() in suits:
+            return rank.capitalize(), suit.capitalize()
+        else:
+            return None
+    else:
+        return None
+
 # Update the score of the winner
 def update_score(scoreboard, winner):
     if winner == 1:
@@ -60,7 +76,15 @@ def deal(deck):
 
 
 # compares the ranks of the cards to determine what is higher/ what wins
-def compare_cards(card1, card2):
+def compare_cards(card1, card2, wildcard = None):
+    if wildcard:
+        if card1==wildcard:
+            print(f"Player in position 1 wins with Wildcard: Rank: {wildcard[0]}, Suit: {wildcard[1]}")
+            return 1
+        elif card2==wildcard:
+            print(f"Player in position 2 wins with Wildcard: Rank: {wildcard[0]}, Suit: {wildcard[1]}")
+            return 2
+        
     ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace']
     if ranks.index(card1[0]) > ranks.index(card2[0]):
         return 1
@@ -75,7 +99,7 @@ Each player places three cards face down and then one card face up.
 The player with the higher face-up card wins all the cards.
 If a player does not have enough cards for war, they lose.
 """    
-def conduct_war(player1_cards, player2_cards, war_cards=None ):
+def conduct_war(player1_cards, player2_cards, war_cards=None, wildcard = None ):
     if war_cards is None:
         war_cards = [] #sets to an empty list
     
@@ -98,11 +122,11 @@ def conduct_war(player1_cards, player2_cards, war_cards=None ):
     print(f"WAR face up cards: Player 1: [{face_up_card1[0]} of {face_up_card1[1]}]   Player 2: [{face_up_card2[0]} of {face_up_card2[1]}]")
     print(f"Number of cards in war_cards: {len(war_cards)}.")
 
-    winner = compare_cards(face_up_card1, face_up_card2)
+    winner = compare_cards(face_up_card1, face_up_card2, wildcard)
     if winner == 0:
         # It's a tie, conduct another war
         print(f"WAR Tie, Another round of War!") 
-        return conduct_war(player1_cards, player2_cards, war_cards)
+        return conduct_war(player1_cards, player2_cards, war_cards, wildcard)
     elif winner == 1:
         player1_cards.extend(war_cards)
     elif winner == 2:
@@ -121,6 +145,14 @@ def main():
             try: 
                 maximum_rounds = int(input("how many rounds do you want to play?"))
                 if maximum_rounds > 0:
+                    card_input = input("Enter a wildcard for the the game (e.g., 'Ace of Spades' or '2 of Hearts'): ")
+                    wildcard = parse_card_input (card_input)
+                    if(wildcard):
+                        print(f"Wild Card Entered: Rank: {wildcard[0]}, Suit: {wildcard[1]}")
+                    else:
+                    # use a 2 of Hearts as the default wild card
+                        wildcard = ('2', 'Hearts')
+                        print(f"Invalid Wild Card entry. Defaulting to Wild Card Rank: {wildcard[0]}, Suit: {wildcard[1]}")
         #create two demensional array using numpy to keep track of the # of cards each player has after each round
                     card_counts = np.array([], dtype=int).reshape(0,2)
                     scoreboard = load_scoreboard("War_Scoreboard.csv")
@@ -136,7 +168,7 @@ def main():
                         card2_value, card2_suit = card2
                         print(f"\nRound {round_counter} Play cards: Player 1: [{card1_value} of {card1_suit}]   Player 2: [{card2_value} of {card2_suit}]")
 
-                        winner = compare_cards(card1, card2)
+                        winner = compare_cards(card1, card2, wildcard)
                         if winner == 1:
                             player1_cards.extend([card1, card2])
 
