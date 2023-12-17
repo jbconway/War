@@ -9,15 +9,18 @@ import random
 def create_scoreboard():
     scoreboard = pd.DataFrame({'Player': ['Player 1', 'Player 2'], 'Score': [0, 0]})
     return scoreboard
+#creates and returns a scoreboard DataFrame initialized with player1 and 2 scores
 
+#function to parse the input string to extract the rank and suit of the card
 def parse_card_input(card_input):
     #Parses the input string to extract the rank and suit of the card.
     # checks off *(7.5)*
+    #checks for valid suits and ranks using regular expression
     suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades']
     ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace']
     pattern = r'(\w+)\s+of\s+(\w+)'
     match = re.match(pattern, card_input)
-
+    #validates and returns the extracted rank and suit if found, else returns none
     if match:
         rank, suit = match.groups()
         if rank.capitalize() in ranks and suit.capitalize() in suits:
@@ -154,14 +157,13 @@ def main():
                     # use a 2 of Hearts as the default wild card
                         wildcard = ('2', 'Hearts')
                         print(f"Invalid Wild Card entry. Defaulting to Wild Card Rank: {wildcard[0]}, Suit: {wildcard[1]}")
-        #create two demensional array using numpy to keep track of the # of cards each player has after each round
+                    #create two demensional array using numpy to keep track of the # of cards each player has after each round
                     card_counts = np.array([], dtype=int).reshape(0,2)
                     scoreboard = load_scoreboard("War_Scoreboard.csv")
                     deck = create_deck()
                     player1_cards, player2_cards = deal(deck)
                     round_counter = 1
-
-    # Placeholder for the game loop
+                    # Placeholder for the game loop
                     while player1_cards and player2_cards and round_counter <=maximum_rounds:
                         card1 = player1_cards.pop(0) # *(checks off 5.11)*
                         card2 = player2_cards.pop(0)
@@ -193,12 +195,12 @@ def main():
                         card_counts = np.append(card_counts,round, axis = 0)
                         round_counter+=1
                     save_scoreboard(scoreboard,"War_Scoreboard.csv")
-        # using vector computation to determine average card count of each player
-        # checks of *(8.1)*
+                    # using vector computation to determine average card count of each player
+                    # checks of *(8.1)*
                     average_cards = np.mean(card_counts, axis=0)
                     print(f"Average cards: Player 1: {average_cards[0]}, Player 2: {average_cards[1]}")
 
-    # *(checks off 8.3)*
+                    # *(checks off 8.3)*
                     df = pd.DataFrame(card_counts)
                     df['Player 1 > Player 2'] = df[0].shift(-1) > df[1]
                     subset = df[df["Player 1 > Player 2"] == True]

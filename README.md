@@ -10,24 +10,20 @@ Dependencies
 * pandas
 * numpy
 
-Installing
+# Installing
 Clone the repository:
-Copy code
-git clone https://github.com/yourusername/war-card-game.git
-Install required packages:
-bash
-Copy code
-pip install pandas numpy
+git clone https://github.com/jbconway/War.git
 
 # Executing program
 Navigate to the project directory:
-bash
-Copy code
-cd war-card-game
+cd War
+Install pip numpy
+Install pip pandas 
 Run the game:
-bash
-Copy code
-python war_game.py
+python final_project.py
+
+When you run the game, it will print the winner's out to the csv file War_Scoreboard.csv
+To change the names of the players, you can edit them in the csv file 
 
 # Authors
 Jillian Conway
